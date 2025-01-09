@@ -949,6 +949,9 @@ debug/
 ### VisualStudioCode ###
 !.vscode/*.code-snippets
 
+# Config dir
+.vscode
+
 # Local History for Visual Studio Code
 
 # Built Visual Studio Code Extensions
