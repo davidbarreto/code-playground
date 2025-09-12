@@ -1,9 +1,11 @@
 mod cmd;
 mod kvstore;
 
+use kvstore::{traits::KVStore, memory::InMemoryKVStore};
+
 fn main() {
 
-    let mut store = kvstore::KVStore::new();
+    let mut store = InMemoryKVStore::new();
     let mut buffer = String::new();
 
     loop {
