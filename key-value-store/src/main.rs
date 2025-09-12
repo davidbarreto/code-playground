@@ -1,8 +1,6 @@
 mod cmd;
 mod kvstore;
 
-use std::io::{stdin, stdout, Write};
-
 fn main() {
 
     let mut store = kvstore::KVStore::new();
@@ -10,35 +8,32 @@ fn main() {
 
     loop {
 
-        print!("> ");
-        let _ = stdout().flush();
-        buffer.clear();
-        let _ = stdin().read_line(&mut buffer);
+        cmd::read(&mut buffer);
 
-        let command = cmd::parse_args(buffer.split_whitespace().map(|s| s.to_string()).collect());
-        match command {
-            cmd::Command::Get(key) => {
+        let result = cmd::parse_args(buffer.split_whitespace().map(|s| s.to_string()).collect());
+        match result {
+            Ok(cmd::Command::Get(key)) => {
                 let value = store.get(&key);
                 cmd::print_get(&key, value);
             },
-            cmd::Command::Set(key, value) => {
+            Ok(cmd::Command::Set(key, value)) => {
                 store.set(&key, &value);
                 cmd::print_set(&key, &value);
             },
-            cmd::Command::Delete(key) => {
+            Ok(cmd::Command::Delete(key)) => {
                 let value = store.delete(&key);
                 cmd::print_delete(&key, value.as_ref());
             },
-            cmd::Command::List => {
+            Ok(cmd::Command::List) => {
                 let items = store.list();
                 cmd::print_list(items);
             },
-            cmd::Command::Exit => {
+            Ok(cmd::Command::Exit) => {
                 cmd::print_exit();
                 break;
             },
-            cmd::Command::Unknown => {
-                println!("Invalid command");
+            Err(cause) => {
+                cmd::print_error(cause);
                 cmd::print_usage();
             },
         }
